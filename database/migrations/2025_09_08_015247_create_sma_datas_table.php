@@ -1,0 +1,30 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('sma_datas', function (Blueprint $table) {
+            $table->id();
+            $table->string('nama_sma');
+            $table->string('logo_sma');
+            $table->foreignId('akreditasi_id')->nullable()->constrained('akreditasis');
+            $table->timestamps();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('sma_datas');
+    }
+};
