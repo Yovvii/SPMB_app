@@ -129,12 +129,24 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 
 Route::get('/debug-migrate', function () {
     try {
-        Artisan::call('migrate', ['--force' => true]);
-        return "Migrasi Berhasil: " . Artisan::output();
+        // 1. Pastikan file database ada di /tmp
+        $dbPath = '/tmp/database.sqlite';
+        if (!file_exists($dbPath)) {
+            touch($dbPath);
+        }
+
+        // 2. Jalankan migrasi dengan output detail
+        Artisan::call('migrate:fresh', [
+            '--force' => true,
+            '--database' => 'sqlite'
+        ]);
+
+        return "<pre>BERHASIL!\n\n" . Artisan::output() . "</pre>";
     } catch (\Exception $e) {
-        return "Gagal Migrasi: " . $e->getMessage();
+        return "GAGAL: " . $e->getMessage();
     }
 });
