@@ -1,5 +1,8 @@
 <?php
 
+if (!file_exists('/tmp/database.sqlite')) {
+    touch('/tmp/database.sqlite');
+}
 // Pastikan folder storage dan cache ada di /tmp (satu-satunya tempat writable di Vercel)
 $storagePath = '/tmp/storage/bootstrap/cache';
 if (!is_dir($storagePath)) {
