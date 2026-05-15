@@ -129,18 +129,28 @@ Route::middleware('auth')->group(function () {
 require __DIR__.'/auth.php';
 
 //migrate
+use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\File;
+
 Route::get('/debug-migrate', function () {
     try {
-        // Paksa hapus semua tabel dan buat baru
-        \Illuminate\Support\Facades\Artisan::call('migrate:fresh', [
+        $dbPath = '/tmp/database.sqlite';
+
+        // 1. Hapus file database secara fisik jika ada
+        if (file_exists($dbPath)) {
+            unlink($dbPath);
+        }
+
+        // 2. Buat file baru yang benar-benar bersih
+        touch($dbPath);
+
+        // 3. Jalankan migrasi dari awal
+        Artisan::call('migrate', [
             '--force' => true,
         ]);
-        
-        // (Opsional) Jika kamu punya seeder untuk isi data awal (seperti admin/status)
-        // \Illuminate\Support\Facades\Artisan::call('db:seed', ['--force' => true]);
 
-        return "<pre>BERHASIL RESET TOTAL!\n\n" . \Illuminate\Support\Facades\Artisan::output() . "</pre>";
+        return "<pre>DATABASE DIBERSIHKAN & MIGRASI SUKSES!\n\n" . Artisan::output() . "</pre>";
     } catch (\Exception $e) {
-        return "GAGAL RESET: " . $e->getMessage();
+        return "GAGAL TOTAL: " . $e->getMessage();
     }
 });
