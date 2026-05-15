@@ -127,3 +127,14 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+use Illuminate\Support\Facades\Artisan;
+
+Route::get('/debug-migrate', function () {
+    try {
+        Artisan::call('migrate', ['--force' => true]);
+        return "Migrasi Berhasil: " . Artisan::output();
+    } catch (\Exception $e) {
+        return "Gagal Migrasi: " . $e->getMessage();
+    }
+});
